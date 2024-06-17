@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.shapes.TriangleCommand;
+import frc.robot.commands.DriveForTimeCommand;
 import frc.robot.subsystems.XRPDrivetrain;
 
 /**
@@ -47,6 +47,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // This is what "command" or task will run when you start autonomous
     // Change it to match whatever shape command you want to run
-    return new TriangleCommand(m_drivetrain);
+    return new DriveForTimeCommand(m_drivetrain, 2.0, 1.0, 0.0);
   }
 }

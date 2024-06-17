@@ -54,18 +54,7 @@ public class XRPDrivetrain extends SubsystemBase {
     m_diffDrive.arcadeDrive(xaxisSpeed, zaxisRotate);
   }
 
-  public void driveForTime(double xSpeed, double zSpeed, double seconds) {
-    //TODO: finish the rest of this method used to draw shapes
 
-    // reset and start the timer
-
-    // drive at the desired speed until timer has reached a certain value
-    while(/* insert boolean condition here */) {
-
-    }
-
-    // stop motors and timer when finished
-  }
 
   public void resetEncoders() {
     m_leftEncoder.reset();

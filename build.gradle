@@ -38,8 +38,8 @@ test {
 }
 
 // Simulation configuration (e.g. environment variables).
-wpi.sim.addGui().defaultEnabled = true
-wpi.sim.addDriverstation()
+wpi.sim.addGui().defaultEnabled = false
+wpi.sim.addDriverstation().defaultEnabled = true
 
 //Sets the XRP Client Host
 wpi.sim.envVar("HALSIMXRP_HOST", "192.168.42.1")
