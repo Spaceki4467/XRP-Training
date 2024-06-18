@@ -39,8 +39,9 @@ public class RobotContainer {
 
     m_autoChooser.addOption("Dropdown", new SimpleAutoCommand(m_drivetrain));
     m_autoChooser.addOption("Dropdown 2.0", new DriveForTimeCommand(m_drivetrain, 1.0, 1.0, 0.0));
+    m_autoChooser.addOption("Dropdown 3.0 but good", m_drivetrain.avoidthewallsdropdownfactorycommand());
 
-    SmartDashboard.putData("Dropdown 3.0", m_autoChooser);
+    SmartDashboard.putData("Dropdown", m_autoChooser);
 
   }
 
@@ -56,10 +57,8 @@ public class RobotContainer {
     m_controller.x().onTrue(new TheDropdownAwakenedLedStyle(m_led, false));
 
     m_controller.a().whileTrue(
-            m_servo.setServoPositionFactory(30)
-                    .withTimeout(0.5)
-            .andThen(m_servo.setServoPositionFactory(120)
-                    .withTimeout(0.5)).repeatedly()
+            m_servo.setServoPositionFactory(30).withTimeout(0.5).andThen(
+                    m_servo.setServoPositionFactory(120).withTimeout(0.5)).repeatedly()
     );
   }
 

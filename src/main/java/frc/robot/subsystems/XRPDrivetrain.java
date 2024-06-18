@@ -4,11 +4,16 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.xrp.XRPGyro;
 import edu.wpi.first.wpilibj.xrp.XRPMotor;
+import edu.wpi.first.wpilibj.xrp.XRPRangefinder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class XRPDrivetrain extends SubsystemBase {
@@ -33,6 +38,7 @@ public class XRPDrivetrain extends SubsystemBase {
 
   // Set up the XRPGyro
   private final XRPGyro m_gyro = new XRPGyro();
+  private final XRPRangefinder m_rangefinder = new XRPRangefinder();
 
   // Create a timer
   private final Timer m_timer = new Timer();
@@ -73,32 +79,43 @@ public class XRPDrivetrain extends SubsystemBase {
     return m_gyro.getAngle();
   }
 
+  public double getRangeInches() {
+    return m_rangefinder.getDistanceInches();
+  }
+  public Command avoidthewallsdropdownfactorycommand() {
+    return new ConditionalCommand(
+            run(() -> arcadeDrive(1, 0)),
+            turnfordegreesdropdownsometimesfactorycommand(90),
+            () -> getRangeInches() >= 10
+    ).repeatedly();
+  }
+
+  public XRPDrivetrain(String name) {
+    super(name);
+  }
+
+  public Command turnfordegreesdropdownsometimesfactorycommand(double degrees) {
+    final double newHeading = MathUtil.inputModulus(getGyroHeading() + degrees, 0, 360);
+    return run(() -> {
+      if (newHeading < getGyroHeading()){
+        arcadeDrive(0,1);
+      } else
+        arcadeDrive(0,-1);
+    }).until(() -> Math.abs(newHeading - getGyroHeading()) <= 10);
+  }
+
   // Neither of these periodic methods are needed, but you can add things to them
   // to tinker
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Robot Heading", getGyroHeading());
+    SmartDashboard.putNumber("Distance (in.)", getRangeInches());
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
-  }
-
-  // rotates the robot a certain amount of degrees positive counterclockwise
-  public void rotateDegrees(double degrees) {
-    // find the new heading goal
-    double newHeading = getGyroHeading() + degrees;
-    double error = newHeading - getGyroHeading();
-
-    // while we're more than a degree away move towards the goal getting slower and slower
-    while (Math.abs(error) > 1) {
-      error = newHeading - getGyroHeading();
-      arcadeDrive(0, error * 0.5);
-    }
-
-    // stop when finished
-    arcadeDrive(0, 0);
   }
 }
