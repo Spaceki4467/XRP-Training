@@ -56,6 +56,10 @@ public class RobotContainer {
     m_controller.b().onTrue(new TheDropdownAwakenedLedStyle(m_led, true));
     m_controller.x().onTrue(new TheDropdownAwakenedLedStyle(m_led, false));
 
+    m_controller.povLeft().whileTrue(m_drivetrain.turnfordegreesdropdownsometimesfactorycommand(-90));
+    m_controller.povRight().whileTrue(m_drivetrain.turnfordegreesdropdownsometimesfactorycommand(90));
+
+
     m_controller.a().whileTrue(
             m_servo.setServoPositionFactory(30).withTimeout(0.5).andThen(
                     m_servo.setServoPositionFactory(120).withTimeout(0.5)).repeatedly()

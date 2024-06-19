@@ -4,7 +4,8 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.MathUtil;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -36,6 +37,8 @@ public class XRPDrivetrain extends SubsystemBase {
   // Set up the differential drive controller
   private final DifferentialDrive m_diffDrive = new DifferentialDrive(m_leftMotor, m_rightMotor);
 
+  private final PIDController m_headingController = new PIDController(0.1,0,0.0);
+
   // Set up the XRPGyro
   private final XRPGyro m_gyro = new XRPGyro();
   private final XRPRangefinder m_rangefinder = new XRPRangefinder();
@@ -49,6 +52,9 @@ public class XRPDrivetrain extends SubsystemBase {
     m_leftEncoder.setDistancePerPulse((Math.PI * WHEEL_DIAMETER_INCH) / COUNTS_PER_REVOLUTION);
     m_rightEncoder.setDistancePerPulse((Math.PI * WHEEL_DIAMETER_INCH) / COUNTS_PER_REVOLUTION);
     resetEncoders();
+
+    m_headingController.setTolerance(10);
+    m_headingController.enableContinuousInput(0, 360);
 
     m_timer.reset();
 
@@ -95,13 +101,11 @@ public class XRPDrivetrain extends SubsystemBase {
   }
 
   public Command turnfordegreesdropdownsometimesfactorycommand(double degrees) {
-    final double newHeading = MathUtil.inputModulus(getGyroHeading() + degrees, 0, 360);
+    final double setpoint = degrees + getGyroHeading();
     return run(() -> {
-      if (newHeading < getGyroHeading()){
-        arcadeDrive(0,1);
-      } else
-        arcadeDrive(0,-1);
-    }).until(() -> Math.abs(newHeading - getGyroHeading()) <= 10);
+      double output = m_headingController.calculate(getGyroHeading(), setpoint);
+      arcadeDrive(0, output);
+    }).until(m_headingController::atSetpoint);
   }
 
   // Neither of these periodic methods are needed, but you can add things to them
@@ -112,6 +116,7 @@ public class XRPDrivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Robot Heading", getGyroHeading());
     SmartDashboard.putNumber("Distance (in.)", getRangeInches());
+    SmartDashboard.putNumber("PID Setpoint", m_headingController.getSetpoint());
   }
 
   @Override
