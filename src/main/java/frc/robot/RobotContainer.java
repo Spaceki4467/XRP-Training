@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,6 +41,8 @@ public class RobotContainer {
     m_autoChooser.addOption("Dropdown", new SimpleAutoCommand(m_drivetrain));
     m_autoChooser.addOption("Dropdown 2.0", new DriveForTimeCommand(m_drivetrain, 1.0, 1.0, 0.0));
     m_autoChooser.addOption("Dropdown 3.0 but good", m_drivetrain.avoidthewallsdropdownfactorycommand());
+
+    m_autoChooser.addOption("PathPlannerDropdownEpicSuperCoolAuto", AutoBuilder.buildAuto("current auto"));
 
     SmartDashboard.putData("Dropdown", m_autoChooser);
 
